@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">SPR Checkin</string>
+    <string name="button">Button</string>
+    <string name="placeholder_1">Placeholder 1</string>
+    <string name="placeholder_2">Placeholder 2</string>
+    <string name="refresh">REFRESH</string>
+    <string name="check_in_check_out">Check In Check Out</string>
+    <string name="applogo" translatable="false">AppLogo</string>
+    <string name="in_out">In / Out</string>
+    <string name="get_database_error">Error accessing server: %1$s</string>
+    <string name="no_tag_on_database">We do not find you in our servers.</string>
+    <string name="hello_employee">"Hello "</string>
+    <string name="direction_employee">%1$s %2$s at %3$s.</string>
+    <string name="logout">logout</string>
+    <string name="login">login</string>
+    <string name="card_request">Please put your card behind the phone.</string>
+    <string name="no_nfc_support">No NFC support. Please reset your phone or bring it for repair.</string>
+    <string name="nfc_disable_alert">NFC feature has been disabled. Please enable it in Settings.</string>
+    <string name="card_read_problem_warning">Problem reading card. Please put your card in again.</string>
+    <string name="scanning_load">Scanning...</string>
+
+</resources>

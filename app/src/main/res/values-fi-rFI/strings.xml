@@ -7,9 +7,9 @@
     <string name="refresh">VIRKISTÄÄ</string>
     <string name="in_out">"Sisään / Ulos "</string>
     <string name="check_in_check_out">"Ilmoittautua / Tarkista "</string>
-    <string name="get_database_error">Virhe palvelimen käytössä: %1$s</string>
+    <string name="get_database_error">Virhe palvelimen käytössä: %1$s.</string>
     <string name="no_tag_on_database">" Emme löydä sinua palvelimiltamme."</string>
-    <string name="hello_employee">"Hei "</string>
+    <string name="hello_employee">Hei %1$s.</string>
     <string name="direction_employee">%1$s %2$s klo %3$s.</string>
     <string name="login">kirjaudu sisään</string>
     <string name="logout">kirjautui ulos</string>
@@ -19,4 +19,5 @@
     <string name="card_read_problem_warning">Ongelma kortin lukemisessa. Laita korttisi uudelleen.</string>
     <string name="scanning_load">"Skannataan… "</string>
     <string name="applogo" translatable="false">Logo</string>
+    <string name="alert_not_logout">VAROITUS: %1$s eivät kirjautuneet ulos!</string>
 </resources>

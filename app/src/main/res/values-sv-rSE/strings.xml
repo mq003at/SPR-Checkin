@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">"SPR Checka In "</string>
+    <string name="button">Knapp</string>
+    <string name="placeholder_1">Platshållare 1</string>
+    <string name="placeholder_2">Platshållare 2</string>
+    <string name="refresh">förfriska</string>
+    <string name="in_out">In / Ut</string>
+    <string name="get_database_error">Virhe palvelimen käytössä: %1$s.</string>
+    <string name="no_tag_on_database">Vi hittar dig inte på våra servrar.</string>
+    <string name="hello_employee">Hej %1$s.</string>
+    <string name="direction_employee">%1$s %2$s på %3$s.</string>
+    <string name="login">logga in</string>
+    <string name="logout">logga ut</string>
+    <string name="card_request">Vänligen lägg ditt kort bakom telefonen.</string>
+    <string name="no_nfc_support">Inget NFC-stöd. Återställ din telefon eller ta med den för reparation.</string>
+    <string name="nfc_disable_alert">NFC-funktionen har inaktiverats. Vänligen aktivera det i Inställningar.</string>
+    <string name="card_read_problem_warning">Problem med att läsa kortet. Sätt i ditt kort igen.</string>
+    <string name="scanning_load">Läser in…</string>
+    <string name="applogo">Applogotyp</string>
+    <string name="alert_not_logout">VARNING: %1$s loggade inte ut!</string>
+    <string name="check_in_check_out">Checka In / Checka Ut</string>
+</resources>

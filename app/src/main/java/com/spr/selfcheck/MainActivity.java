@@ -1,26 +1,21 @@
 package com.spr.selfcheck;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
-import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.content.SharedPreferences;
 
-import android.content.pm.PackageManager;
+
 import android.graphics.Color;
-import android.media.MediaScannerConnection;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
-import android.os.Build;
 import android.os.Bundle;
 
-import android.os.Environment;
 import android.os.Parcelable;
 import android.util.Log;
 import android.widget.Button;
@@ -28,14 +23,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     NfcAdapter nfcAdapter;
@@ -44,26 +34,34 @@ public class MainActivity extends AppCompatActivity {
     Button btnLogIn;
     Button btnRefresh;
     ImageButton btnLocale;
+    ImageButton btnLocale2;
+    ImageButton btnLocale3;
     FirebaseAccess access;
 
     SharedPreferences sharedPreferences;
     String currentLocale;
 
+    String documentStamp, dateStamp, timeStamp, realtime;
+    long scheduledTime;
+    int dateS;
 
+    @SuppressLint("SimpleDateFormat")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Generating layout
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getWindow().getDecorView().setBackgroundColor(Color.WHITE);
-        getSupportActionBar().hide();
+        Objects.requireNonNull(getSupportActionBar()).hide();
+
 
         // localStorage init
+        scheduledTime = 86100000;
         sharedPreferences = getSharedPreferences("SPR", MODE_PRIVATE);
         if (sharedPreferences.contains("locale")) currentLocale = sharedPreferences.getString("locale", "");
         else {
-            currentLocale = "en";
-            sharedPreferences.edit().putString("locale", "en").apply();
+            currentLocale = "fi";
+            sharedPreferences.edit().putString("locale", "fi").apply();
         }
         LocaleHelper.setLocale(this, currentLocale);
 
@@ -76,10 +74,10 @@ public class MainActivity extends AppCompatActivity {
         btnLogIn = findViewById(R.id.btnLogIn);
         btnRefresh = findViewById(R.id.btnRefresh);
         btnLocale = findViewById(R.id.btnLocale);
+        btnLocale2 = findViewById(R.id.btnLocale2);
+        btnLocale3 = findViewById(R.id.btnLocale3);
         btnLogIn.setText(R.string.in_out);
         btnRefresh.setText(R.string.refresh);
-        if (currentLocale.equals("fi")) btnLocale.setBackgroundResource(R.drawable.usa_flag);
-        else btnLocale.setBackgroundResource(R.drawable.fin_flag);
 
         // NFC Init
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
@@ -92,24 +90,27 @@ public class MainActivity extends AppCompatActivity {
         handleIntent(getIntent());
         access = new FirebaseAccess();
 
-        String documentStamp, dateStamp, timeStamp, realtime;
-        int dateS;
-
-        // Current time init
-        Date date = new Date();
-        documentStamp = new SimpleDateFormat("yyyyMMddHHmmssS").format(date);
-        timeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(date);
-        dateStamp = new SimpleDateFormat("yyyyMMdd").format(date);
-        dateS = Integer.parseInt(dateStamp);
-        realtime = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss").format(date);
 
         // Logging out people
+//        TaskManager logoutTask = new TaskManager(this);
+//        logoutTask.logout_schedule(scheduledTime);
 
+        // Generate log files
+        // access.generate_logs(this, dateStamp);
 
         // Button
         btnLogIn.setOnClickListener(view -> {
             if (access.employeeID.equals("")) txtPlaceholderOne.setText(R.string.card_request);
             else {
+
+                // Time init, scheduledTime equivalent to 23:55.
+                Date date = new Date();
+                documentStamp = new SimpleDateFormat("yyyyMMddHHmmssS").format(date);
+                timeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(date);
+                dateStamp = new SimpleDateFormat("yyyyMMdd").format(date);
+                dateS = Integer.parseInt(dateStamp);
+                realtime = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss").format(date);
+
                 // Database info update
                 access.self_check(access.employeeID, documentStamp, timeStamp, dateS, realtime, this);
             }
@@ -120,24 +121,41 @@ public class MainActivity extends AppCompatActivity {
             txtPlaceholderOne.setText(R.string.card_request);
             txtPlaceholderTwo.setText("");
             access = new FirebaseAccess();
-
-//            access.generate_logs(this, dateStamp);
-
-//            if (isStoragePermissionGranted()) {
-//                Log.e("Yes", "Y");
-//                File folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
-//                File file = new File(folder, "geeksData.txt");
-//            }
         });
 
         // Change locale
         btnLocale.setOnClickListener(v -> {
-            if (currentLocale.equals("fi")) currentLocale = "en"; else currentLocale = "fi";
-            sharedPreferences.edit().putString("locale", currentLocale).apply();
-            LocaleHelper.setLocale(this, currentLocale);
-            Intent intent = getIntent();
-            finish();
-            startActivity(intent);
+            if (!currentLocale.equals("fi"))
+            {
+                currentLocale = "fi";
+                sharedPreferences.edit().putString("locale", currentLocale).apply();
+                LocaleHelper.setLocale(this, currentLocale);
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
+            }
+        });
+        btnLocale2.setOnClickListener(v -> {
+            if (!currentLocale.equals("en"))
+            {
+                currentLocale = "en";
+                sharedPreferences.edit().putString("locale", currentLocale).apply();
+                LocaleHelper.setLocale(this, currentLocale);
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
+            }
+        });
+        btnLocale3.setOnClickListener(v -> {
+            if (!currentLocale.equals("sv"))
+            {
+                currentLocale = "sv";
+                sharedPreferences.edit().putString("locale", currentLocale).apply();
+                LocaleHelper.setLocale(this, currentLocale);
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
+            }
         });
     }
 
@@ -201,11 +219,6 @@ public class MainActivity extends AppCompatActivity {
 
     public static void stopForegroundDispatch(final Activity activity, NfcAdapter adapter) {
         adapter.disableForegroundDispatch(activity);
-    }
-
-    public void setSchedule() {
-        AlarmManager alarmManager = (AlarmManager) this.getSystemService(this.ALARM_SERVICE);
-
     }
 
 }

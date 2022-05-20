@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SPR Checkin</string>
     <string name="button">Button</string>
@@ -19,6 +20,4 @@
     <string name="card_read_problem_warning">Problem reading card. Please put your card in again.</string>
     <string name="scanning_load">Scanning…</string>
     <string name="alert_not_logout">ALERT: %1$s did not logout!</string>
-
-
 </resources>

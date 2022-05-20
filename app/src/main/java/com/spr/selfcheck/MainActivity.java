@@ -92,8 +92,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         // Logging out people
-//        TaskManager logoutTask = new TaskManager(this);
-//        logoutTask.logout_schedule(scheduledTime);
+        TaskManager logoutTask = new TaskManager(this);
+        logoutTask.logout_schedule(scheduledTime);
 
         // Generate log files
         // access.generate_logs(this, dateStamp);

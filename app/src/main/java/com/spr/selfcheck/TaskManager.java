@@ -26,9 +26,11 @@ public class TaskManager {
             @Override
             public void onReceive(Context context, Intent intent) {
                 // Logout employee
-                access = new FirebaseAccess();
-                access.logout_all(context);
-                Toast.makeText(context, "Schedule employee check: complete!", Toast.LENGTH_SHORT).show();
+                long currentTime = System.currentTimeMillis();
+                if (currentTime > 86000000 && currentTime < 86200000) {
+                    access = new FirebaseAccess();
+                    access.logout_all(context);
+                }
             }
         };
         context.registerReceiver(myBroadcastReceiver, new IntentFilter("com.spr.selfcheck"));

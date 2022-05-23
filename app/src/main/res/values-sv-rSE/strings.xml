@@ -20,4 +20,5 @@
     <string name="applogo">Applogotyp</string>
     <string name="alert_not_logout">VARNING: %1$s loggade inte ut!</string>
     <string name="check_in_check_out">Checka In / Checka Ut</string>
+    <string name="logout_noproblem">Schemalägg personalkontroll: klar!</string>
 </resources>

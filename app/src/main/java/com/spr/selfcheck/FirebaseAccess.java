@@ -163,6 +163,7 @@ public class FirebaseAccess {
                     }
                     txtPlaceholderTwo.setText(context.getString(R.string.alert_not_logout, listNotLoggedOut.toString()));
                 }
+                else txtPlaceholderTwo.setText(context.getString(R.string.logout_noproblem));
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {

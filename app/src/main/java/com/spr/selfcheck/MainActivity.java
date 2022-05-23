@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         // NFC Init
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (nfcAdapter == null) {
-            Toast.makeText(this, R.string.no_nfc_support, Toast.LENGTH_SHORT).show();
+            txtPlaceholderOne.setText(R.string.no_nfc_support);
         }
         if (!nfcAdapter.isEnabled()) {
             txtPlaceholderOne.setText(R.string.nfc_disable_alert);

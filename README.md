@@ -16,7 +16,7 @@ The APK requires Android version 7.0 or above.
 * From the Tool bar on top, select **Build -> Build Bundles / APK -> Build APKs**.
 * After Gradle finish compiling, you can **Locate** the APK file from **Event Log** on the bottom-right corner of Android Studio. Copy it to your phone to install and run it.
 * (Optional) You can pair your phone over Wifi to run the APK. From the Debug Device Selection on the toolbar, choose **Pair Devices over Wifi.** The APK will be built and installed directly through Wifi.
-* **Note** You can run the APK from your IDE's emulator by pressing **Shift + F10**. However, since the APK requires NFC scanner to work, the emulator will not work as intentded.
+* **NOTE:** You can run the APK from your IDE's emulator by pressing **Shift + F10**. However, since the APK requires NFC scanner to work, the emulator will not work as intentded.
 
 
 ##  Usage

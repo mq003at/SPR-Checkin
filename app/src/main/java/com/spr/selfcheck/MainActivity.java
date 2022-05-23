@@ -16,6 +16,7 @@ import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 
+import android.os.Handler;
 import android.os.Parcelable;
 import android.util.Log;
 import android.widget.Button;
@@ -32,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     TextView txtPlaceholderOne;
     TextView txtPlaceholderTwo;
     Button btnLogIn;
-    Button btnRefresh;
+//    Button btnRefresh;
     ImageButton btnLocale;
     ImageButton btnLocale2;
     ImageButton btnLocale3;
@@ -72,12 +73,12 @@ public class MainActivity extends AppCompatActivity {
         txtPlaceholderTwo.setText("");
 
         btnLogIn = findViewById(R.id.btnLogIn);
-        btnRefresh = findViewById(R.id.btnRefresh);
+//        btnRefresh = findViewById(R.id.btnRefresh);
         btnLocale = findViewById(R.id.btnLocale);
         btnLocale2 = findViewById(R.id.btnLocale2);
         btnLocale3 = findViewById(R.id.btnLocale3);
         btnLogIn.setText(R.string.in_out);
-        btnRefresh.setText(R.string.refresh);
+//        btnRefresh.setText(R.string.refresh);
 
         // NFC Init
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
@@ -117,11 +118,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Refresh state
-        btnRefresh.setOnClickListener(v -> {
-            txtPlaceholderOne.setText(R.string.card_request);
-            txtPlaceholderTwo.setText("");
-            access = new FirebaseAccess();
-        });
+//        btnRefresh.setOnClickListener(v -> {
+//            txtPlaceholderOne.setText(R.string.card_request);
+//            txtPlaceholderTwo.setText("");
+//            access = new FirebaseAccess();
+//        });
 
         // Change locale
         btnLocale.setOnClickListener(v -> {
@@ -190,6 +191,13 @@ public class MainActivity extends AppCompatActivity {
                 // Database get name
                 access = new FirebaseAccess();
                 access.get_name(empID, this);
+                new Handler().postDelayed(() -> {
+
+                    // Refresh
+                    txtPlaceholderTwo.setText("");
+                    access = new FirebaseAccess();
+
+                }, 10000);
 
             } else {txtPlaceholderOne.setText(R.string.card_read_problem_warning);}
         }

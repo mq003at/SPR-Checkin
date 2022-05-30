@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -20,27 +21,31 @@ import android.os.Handler;
 import android.os.Parcelable;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
     NfcAdapter nfcAdapter;
     TextView txtPlaceholderOne;
     TextView txtPlaceholderTwo;
     Button btnLogIn;
-//    Button btnRefresh;
     ImageButton btnLocale;
     ImageButton btnLocale2;
     ImageButton btnLocale3;
+    CheckBox checkBoxLog;
     FirebaseAccess access;
+    TaskManager sprManager;
 
     SharedPreferences sharedPreferences;
     String currentLocale;
+
 
     String documentStamp, dateStamp, timeStamp, realtime;
     long scheduledTime;
@@ -57,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         // localStorage init
-        scheduledTime = 86100000;
         sharedPreferences = getSharedPreferences("SPR", MODE_PRIVATE);
         if (sharedPreferences.contains("locale")) currentLocale = sharedPreferences.getString("locale", "");
         else {
@@ -73,12 +77,11 @@ public class MainActivity extends AppCompatActivity {
         txtPlaceholderTwo.setText("");
 
         btnLogIn = findViewById(R.id.btnLogIn);
-//        btnRefresh = findViewById(R.id.btnRefresh);
         btnLocale = findViewById(R.id.btnLocale);
         btnLocale2 = findViewById(R.id.btnLocale2);
         btnLocale3 = findViewById(R.id.btnLocale3);
         btnLogIn.setText(R.string.in_out);
-//        btnRefresh.setText(R.string.refresh);
+        checkBoxLog = findViewById(R.id.checkBoxLog);
 
         // NFC Init
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
@@ -90,11 +93,7 @@ public class MainActivity extends AppCompatActivity {
         }
         handleIntent(getIntent());
         access = new FirebaseAccess();
-
-
-        // Logging out people
-        TaskManager logoutTask = new TaskManager(this);
-        logoutTask.logout_schedule(scheduledTime);
+        sprManager = new TaskManager(this);
 
         // Generate log files
         // access.generate_logs(this, dateStamp);
@@ -114,15 +113,19 @@ public class MainActivity extends AppCompatActivity {
 
                 // Database info update
                 access.self_check(access.employeeID, documentStamp, timeStamp, dateS, realtime, this);
+
+                // Logging out people (if not set yet)
+                sprManager.setLogoutAtNight();
             }
         });
 
-        // Refresh state
-//        btnRefresh.setOnClickListener(v -> {
-//            txtPlaceholderOne.setText(R.string.card_request);
-//            txtPlaceholderTwo.setText("");
-//            access = new FirebaseAccess();
-//        });
+        // Log generating for that day
+        checkBoxLog.setOnClickListener(v -> {
+            if (checkBoxLog.isChecked()) {
+                sprManager.setGenerateTodayLogAtNight();
+            } else sprManager.unregisterGenerateTodayLogAtNight();
+        });
+
 
         // Change locale
         btnLocale.setOnClickListener(v -> {
@@ -137,28 +140,33 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         btnLocale2.setOnClickListener(v -> {
-            if (!currentLocale.equals("en"))
-            {
-                currentLocale = "en";
-                sharedPreferences.edit().putString("locale", currentLocale).apply();
-                LocaleHelper.setLocale(this, currentLocale);
-                Intent intent = getIntent();
-                finish();
-                startActivity(intent);
-            }
+//            if (!currentLocale.equals("en"))
+//            {
+//                currentLocale = "en";
+//                sharedPreferences.edit().putString("locale", currentLocale).apply();
+//                LocaleHelper.setLocale(this, currentLocale);
+//                Intent intent = getIntent();
+//                finish();
+//                startActivity(intent);
+//            }
+
         });
         btnLocale3.setOnClickListener(v -> {
-            if (!currentLocale.equals("sv"))
-            {
-                currentLocale = "sv";
-                sharedPreferences.edit().putString("locale", currentLocale).apply();
-                LocaleHelper.setLocale(this, currentLocale);
-                Intent intent = getIntent();
-                finish();
-                startActivity(intent);
-            }
+//            if (!currentLocale.equals("sv"))
+//            {
+//                currentLocale = "sv";
+//                sharedPreferences.edit().putString("locale", currentLocale).apply();
+//                LocaleHelper.setLocale(this, currentLocale);
+//                Intent intent = getIntent();
+//                finish();
+//                startActivity(intent);
+//            }
+            FirebaseAccess access = new FirebaseAccess();
+            access.generate_logs(this, "20220524");
         });
     }
+
+
 
     // Setup NFC to be on foreground
     @Override
@@ -190,11 +198,11 @@ public class MainActivity extends AppCompatActivity {
 
                 // Database get name
                 access = new FirebaseAccess();
-                access.get_name(empID, this);
+                access.get_name(empID, this, name -> txtPlaceholderOne.setText(getString(R.string.hello_employee, name)));
                 new Handler().postDelayed(() -> {
 
                     // Refresh
-                    txtPlaceholderTwo.setText("");
+                    txtPlaceholderOne.setText(R.string.card_request);
                     access = new FirebaseAccess();
 
                 }, 10000);

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.spr.selfcheck">
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.NFC" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -14,6 +17,7 @@
         android:theme="@style/Theme.SPRCheckin">
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,6 +28,18 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
+        <receiver android:name=".TaskManager$LogoutAtNight"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.ALARM"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".TaskManager$GenerateLogAtNight"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.ALARM"/>
+            </intent-filter>
+        </receiver>
 
     </application>
 

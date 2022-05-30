@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SPR Ilmoittautua</string>
-    <string name="button">Nappula</string>
+    <string name="app_name">SPR Sisäänkirjautuminen</string>
+    <string name="button">"Näppäin "</string>
     <string name="placeholder_1">Paikanpitäjä 1</string>
     <string name="placeholder_2">Paikanpitäjä 2</string>
-    <string name="refresh">VIRKISTÄÄ</string>
+    <string name="refresh">PÄIVITTÄÄ</string>
     <string name="in_out">"Sisään / Ulos "</string>
-    <string name="check_in_check_out">"Ilmoittautua / Tarkista "</string>
+    <string name="check_in_check_out">"Sisään / Ulos "</string>
     <string name="get_database_error">Virhe palvelimen käytössä: %1$s.</string>
     <string name="no_tag_on_database">" Emme löydä sinua palvelimiltamme."</string>
     <string name="hello_employee">Hei %1$s.</string>
     <string name="direction_employee">%1$s %2$s klo %3$s.</string>
     <string name="login">kirjaudu sisään</string>
-    <string name="logout">kirjautui ulos</string>
+    <string name="logout">kirjaudu ulos</string>
     <string name="card_request">Laita korttisi puhelimen taakse.</string>
-    <string name="no_nfc_support">Ei NFC-tukea. Nollaa puhelimesi tai vie se korjattavaksi.</string>
+    <string name="no_nfc_support">Ei NFC-tukea. Käynnistä puhelimesi uudelleen tai vie se korjattavaksi.</string>
     <string name="nfc_disable_alert">NFC-ominaisuus on poistettu käytöstä. Ota se käyttöön asetuksissa.</string>
     <string name="card_read_problem_warning">Ongelma kortin lukemisessa. Laita korttisi uudelleen.</string>
     <string name="scanning_load">"Skannataan… "</string>
     <string name="applogo" translatable="false">Logo</string>
     <string name="alert_not_logout">VAROITUS: %1$s eivät kirjautuneet ulos!</string>
-    <string name="logout_noproblem">Aikataulu työntekijätarkastus: valmis!</string>
+    <string name="logout_noproblem">Työntekijätarkastus: valmis!</string>
+    <string name="log">Loki</string>
 </resources>

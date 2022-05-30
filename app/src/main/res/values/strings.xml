@@ -19,7 +19,8 @@
     <string name="card_read_problem_warning">Problem reading card. Please put your card in again.</string>
     <string name="scanning_load">Scanning…</string>
     <string name="alert_not_logout">ALERT: %1$s did not logout!</string>
-    <string name="logout_noproblem">Schedule employee check: complete!</string>
+    <string name="logout_noproblem">Employee check: complete!</string>
+    <string name="log">Log</string>
 
 
 </resources>

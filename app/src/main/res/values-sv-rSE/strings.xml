@@ -22,4 +22,6 @@
     <string name="check_in_check_out">Checka In / Checka Ut</string>
     <string name="logout_noproblem">Personalkontroll: klar!</string>
     <string name="log">Logg</string>
+    <string name="error_file_create">FEL: kan inte skapa filen.</string>
+    <string name="error_file_inout">FEL: kan inte skriva till filen.</string>
 </resources>

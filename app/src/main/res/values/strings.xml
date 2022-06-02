@@ -21,6 +21,8 @@
     <string name="alert_not_logout">ALERT: %1$s did not logout!</string>
     <string name="logout_noproblem">Employee check: complete!</string>
     <string name="log">Log</string>
+    <string name="error_file_inout">Problem occurs when outputting to file.</string>
+    <string name="error_file_create">Problem occurs when creating file to write.</string>
 
 
 </resources>

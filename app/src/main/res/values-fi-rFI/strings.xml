@@ -22,4 +22,6 @@
     <string name="alert_not_logout">VAROITUS: %1$s eivät kirjautuneet ulos!</string>
     <string name="logout_noproblem">Työntekijätarkastus: valmis!</string>
     <string name="log">Loki</string>
+    <string name="error_file_create">VIRHE: tiedostoa ei voi luoda.</string>
+    <string name="error_file_inout">VIRHE: tiedostoon ei voi kirjoittaa.</string>
 </resources>

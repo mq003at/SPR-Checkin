@@ -2,7 +2,6 @@ package com.spr.selfcheck;
 
 import static android.content.Context.ALARM_SERVICE;
 
-import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -24,22 +23,25 @@ public class TaskManager {
     AlarmManager alarmManager;
 
     public TaskManager(Context context) {
-        this.context = context; Log.e("Created", "yes");
+        this.context = context;
     }
 
-    public void setLogoutAtNight(){
-        Log.e("Generated", "yes");
-        intent = new Intent(context, TaskManager.LogoutAtNight.class);
+    public long calendarGenerator(int hour, int minute, int second) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 55);
-        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, minute);
+        calendar.set(Calendar.SECOND, second);
         calendar.set(Calendar.MILLISECOND, 0);
         if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
             calendar.add(Calendar.DATE, 1);
         }
-        timeTrigger = calendar.getTimeInMillis();
+        return calendar.getTimeInMillis();
+    }
+
+    public void setLogoutAtNight(){
+        intent = new Intent(context, TaskManager.LogoutAtNight.class);
+        timeTrigger = calendarGenerator(23, 57, 0);
         pendingIntent = PendingIntent.getBroadcast(context, (int) timeTrigger, intent, PendingIntent.FLAG_ONE_SHOT);
         alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, timeTrigger, pendingIntent);
@@ -47,24 +49,19 @@ public class TaskManager {
 
     public void setGenerateTodayLogAtNight() {
         intent = new Intent(context, TaskManager.GenerateLogAtNight.class);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 18);
-        calendar.set(Calendar.MINUTE, 30);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
-            calendar.add(Calendar.DATE, 1);
-        }
-        timeTrigger = calendar.getTimeInMillis();
-        pendingIntent = PendingIntent.getBroadcast(context, (int) timeTrigger, intent, PendingIntent.FLAG_ONE_SHOT);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        timeTrigger = calendarGenerator(23, 55, 0);
+        pendingIntent = PendingIntent.getBroadcast(context, (int) timeTrigger, intent, 0);
         alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, timeTrigger, pendingIntent);
-
     }
 
-    public void unregisterGenerateTodayLogAtNight(){
-
+    public void unregisterGenerateTodayLogAtNight(Context context){
+        intent = new Intent(context, TaskManager.GenerateLogAtNight.class);
+        timeTrigger = calendarGenerator(23, 55, 0);
+        pendingIntent = PendingIntent.getBroadcast(context, (int) timeTrigger, intent, 0);
+        alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
     }
 
     static public class LogoutAtNight extends BroadcastReceiver {
@@ -73,17 +70,19 @@ public class TaskManager {
             Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
             vibrator.vibrate(4000);
             FirebaseAccess access = new FirebaseAccess();
-//            access.logout_all(context);
+            access.logout_all(context);
         }
     }
 
     static public class GenerateLogAtNight extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+            vibrator.vibrate(4000);
             Date date = new Date();
             String dateStamp = new SimpleDateFormat("yyyyMMdd").format(date);
             FirebaseAccess access = new FirebaseAccess();
-//            access.generate_logs(context, dateStamp);
+            access.generate_logs(context, dateStamp);
         }
     }
 

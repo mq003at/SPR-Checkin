@@ -22,4 +22,6 @@
     <string name="alert_not_logout">ALERT: %1$s did not logout!</string>
     <string name="logout_noproblem">Schedule employee check: complete!</string>
     <string name="log">Log</string>
+    <string name="error_file_create">ERROR: cannot create file.</string>
+    <string name="error_file_inout">ERROR: cannot write to file.</string>
 </resources>

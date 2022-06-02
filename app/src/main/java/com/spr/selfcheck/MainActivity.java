@@ -17,6 +17,7 @@ import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.util.Log;
@@ -26,6 +27,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -48,7 +52,6 @@ public class MainActivity extends AppCompatActivity{
 
 
     String documentStamp, dateStamp, timeStamp, realtime;
-    long scheduledTime;
     int dateS;
 
     @SuppressLint("SimpleDateFormat")
@@ -92,11 +95,9 @@ public class MainActivity extends AppCompatActivity{
             txtPlaceholderOne.setText(R.string.nfc_disable_alert);
         }
         handleIntent(getIntent());
+
         access = new FirebaseAccess();
         sprManager = new TaskManager(this);
-
-        // Generate log files
-        // access.generate_logs(this, dateStamp);
 
         // Button
         btnLogIn.setOnClickListener(view -> {
@@ -116,18 +117,19 @@ public class MainActivity extends AppCompatActivity{
 
                 // Logging out people (if not set yet)
                 sprManager.setLogoutAtNight();
+
+                // Making log files in case the website breaks (only activate when button checked)
+                if (checkBoxLog.isChecked()) sprManager.setGenerateTodayLogAtNight();
             }
         });
 
-        // Log generating for that day
+        // Log generating for that day (uncheck will cancel log generating)
         checkBoxLog.setOnClickListener(v -> {
-            if (checkBoxLog.isChecked()) {
-                sprManager.setGenerateTodayLogAtNight();
-            } else sprManager.unregisterGenerateTodayLogAtNight();
+            if (!checkBoxLog.isChecked()) sprManager.unregisterGenerateTodayLogAtNight(this);
         });
 
 
-        // Change locale
+        // Change locale (fi-en-swed)
         btnLocale.setOnClickListener(v -> {
             if (!currentLocale.equals("fi"))
             {
@@ -140,33 +142,29 @@ public class MainActivity extends AppCompatActivity{
             }
         });
         btnLocale2.setOnClickListener(v -> {
-//            if (!currentLocale.equals("en"))
-//            {
-//                currentLocale = "en";
-//                sharedPreferences.edit().putString("locale", currentLocale).apply();
-//                LocaleHelper.setLocale(this, currentLocale);
-//                Intent intent = getIntent();
-//                finish();
-//                startActivity(intent);
-//            }
+            if (!currentLocale.equals("en"))
+            {
+                currentLocale = "en";
+                sharedPreferences.edit().putString("locale", currentLocale).apply();
+                LocaleHelper.setLocale(this, currentLocale);
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
+            }
 
         });
         btnLocale3.setOnClickListener(v -> {
-//            if (!currentLocale.equals("sv"))
-//            {
-//                currentLocale = "sv";
-//                sharedPreferences.edit().putString("locale", currentLocale).apply();
-//                LocaleHelper.setLocale(this, currentLocale);
-//                Intent intent = getIntent();
-//                finish();
-//                startActivity(intent);
-//            }
-            FirebaseAccess access = new FirebaseAccess();
-            access.generate_logs(this, "20220524");
+            if (!currentLocale.equals("sv"))
+            {
+                currentLocale = "sv";
+                sharedPreferences.edit().putString("locale", currentLocale).apply();
+                LocaleHelper.setLocale(this, currentLocale);
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
+            }
         });
     }
-
-
 
     // Setup NFC to be on foreground
     @Override
@@ -185,6 +183,7 @@ public class MainActivity extends AppCompatActivity{
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         handleIntent(intent);
+
     }
 
     private void handleIntent(Intent intent) {
@@ -198,7 +197,7 @@ public class MainActivity extends AppCompatActivity{
 
                 // Database get name
                 access = new FirebaseAccess();
-                access.get_name(empID, this, name -> txtPlaceholderOne.setText(getString(R.string.hello_employee, name)));
+                access.output_name(empID, this);
                 new Handler().postDelayed(() -> {
 
                     // Refresh
@@ -212,7 +211,8 @@ public class MainActivity extends AppCompatActivity{
     }
 
     public static void setupForegroundDispatch(final Activity activity, NfcAdapter adapter) {
-        final Intent intent = new Intent(activity.getApplicationContext(), activity.getClass());
+        Intent intent = new Intent(activity.getApplicationContext(), activity.getClass());
+        intent.putExtra("requestCode", 0);
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
         final PendingIntent pendingIntent = PendingIntent.getActivity(activity.getApplicationContext(), 0, intent, 0);

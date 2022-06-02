@@ -193,7 +193,7 @@ public class FirebaseAccess {
 
     // Function to generate logs
     public void generate_logs(Context context, String today) {
-        IOStream writeTool = new IOStream(context, today);
+        IOStream writeTool = new IOStream(context, today, "spr-backup-");
         get_employee_data(context, today, employeeData -> {
             writeTool.writeToFile(employeeData.replace("[", "").replace("]", "") + "\n\n");
         });
@@ -208,10 +208,9 @@ public class FirebaseAccess {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     StringBuilder listNotLoggedOut = new StringBuilder();
-                    listNotLoggedOut.append("abc");
                     for (DataSnapshot snap : snapshot.getChildren()) {
                         update_state(snap.getKey(), "out");
-                        listNotLoggedOut.append(snap.getKey()).append(" ");
+                        listNotLoggedOut.append(snap.getKey()).append(snap.getKey()). append(" ");
                     }
                     NotificationMaker notify = new NotificationMaker();
                     notify.alertInEmployee(context, context.getString(R.string.alert_not_logout, listNotLoggedOut.toString()), new Intent(context, FirebaseAccess.class), 1);

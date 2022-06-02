@@ -28,13 +28,15 @@ public class IOStream {
     private File file;
 
     private String today;
-    String docLocation;
+    private String fileName;
+    private String docLocation;
 
-    public IOStream(Context context, String today) {
+    public IOStream(Context context, String today, String fileName) {
         this.context = context;
         this.today = today;
+        this.fileName = fileName;
         docLocation = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
-        file = new File(docLocation + "/SPR", "spr-backup-" + today + ".txt");
+        file = new File(docLocation + "/SPR", fileName + today + ".txt");
     }
 
     // Writing data (split into 2 parts since Android 11 and above works differently)
@@ -45,7 +47,7 @@ public class IOStream {
                 value.put(MediaStore.MediaColumns.DISPLAY_NAME, "spr-backup-" + today);
                 value.put(MediaStore.MediaColumns.MIME_TYPE, "text/plain");
                 value.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOCUMENTS + "/SPR");
-                if (!(new File(docLocation + "/SPR", "spr-backup-" + today + ".txt").exists())) {
+                if (!(new File(docLocation + "/SPR", fileName + today + ".txt").exists())) {
                     uri = context.getContentResolver().insert(MediaStore.Files.getContentUri("external"), value);
                 } else {
                     uri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", file);

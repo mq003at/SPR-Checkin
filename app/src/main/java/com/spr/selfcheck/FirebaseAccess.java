@@ -1,19 +1,15 @@
 package com.spr.selfcheck;
 
 import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
+
 import android.content.Context;
 import android.content.Intent;
-import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.NotificationCompat;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,14 +18,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.lang.reflect.Array;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
+
+import java.util.Date;
 
 public class FirebaseAccess {
     final private DatabaseReference shopReference;
@@ -83,7 +77,7 @@ public class FirebaseAccess {
                 txtPlaceholderTwo.setText(context.getString(R.string.direction_employee, eName, strDirection, realtime));
                 new Handler().postDelayed(() -> {
                     // Refresh
-                    txtPlaceholderTwo.setText("");
+                    txtPlaceholderTwo.setText(R.string.reminder_logout);
                 }, 10000);
             }
         });
@@ -97,13 +91,13 @@ public class FirebaseAccess {
     }
 
     public void get_name(String id, Context context, final String_Callback callback) {
-        shopReference.addValueEventListener(new ValueEventListener() {
+        shopReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot snap : snapshot.getChildren()) {
                     String snapKey = snap.getKey();
                     Query query = shopReference.child(snapKey + "/employees/").orderByChild("tag_id").equalTo(id);
-                    query.addValueEventListener(new ValueEventListener() {
+                    query.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             if (snapshot.exists()) {
@@ -134,7 +128,7 @@ public class FirebaseAccess {
     // Get data of all employee working on a specific day (String today)
     public void get_employee_data(Context context, String today, final String_Callback string_callback) {
 
-        eventReference.addValueEventListener(new ValueEventListener() {
+        eventReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -142,7 +136,7 @@ public class FirebaseAccess {
 
                     String snapKey = snap.getKey();
                     Query query = eventReference.child(snapKey + "/log_events").orderByChild("dateStamp").equalTo(Integer.parseInt(today));
-                    query.addValueEventListener(new ValueEventListener() {
+                    query.addListenerForSingleValueEvent(new ValueEventListener() {
                         ArrayList<ArrayList<ArrayList<String>>> listData = new ArrayList<>();
 
                         @Override
@@ -175,9 +169,7 @@ public class FirebaseAccess {
                                     string_callback.onSuccess(employeeData.toString());
                                 });
                             }
-
                         }
-
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
                         }
@@ -201,19 +193,28 @@ public class FirebaseAccess {
 
     // Logout all employee
     public void logout_all(Context context) {
+        Log.e("logoutall", "reach");
         Query query = eventReference.orderByChild("actual_state").equalTo("in");
-        query.addValueEventListener(new ValueEventListener() {
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     StringBuilder listNotLoggedOut = new StringBuilder();
+                    Date date = new Date();
+                    String timeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(date);
+                    String documentStamp = new SimpleDateFormat("yyyyMMddHHmmssS").format(date);
+                    String dateStamp = new SimpleDateFormat("yyyyMMdd").format(date);
+                    int dateS = Integer.parseInt(dateStamp);
+
                     for (DataSnapshot snap : snapshot.getChildren()) {
                         update_state(snap.getKey(), "out");
-                        listNotLoggedOut.append(snap.getKey()).append(snap.getKey()). append(" ");
+                        add_record(snap.getKey(), documentStamp, timeStamp, dateS,"out");
+                        listNotLoggedOut.append(snap.getKey()).append(" ");
                     }
                     NotificationMaker notify = new NotificationMaker();
-                    notify.alertInEmployee(context, context.getString(R.string.alert_not_logout, listNotLoggedOut.toString()), new Intent(context, FirebaseAccess.class), 1);
+                    notify.alertInEmployee(context, context.getString(R.string.logout_report), context.getString(R.string.alert_not_logout, listNotLoggedOut.toString()), new Intent(context, FirebaseAccess.class), 1);
+
                 }
             }
 

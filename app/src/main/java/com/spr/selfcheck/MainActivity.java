@@ -17,7 +17,6 @@ import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.util.Log;
@@ -27,11 +26,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 
@@ -77,7 +73,7 @@ public class MainActivity extends AppCompatActivity{
         txtPlaceholderOne = findViewById(R.id.txtPlaceholderOne);
         txtPlaceholderTwo = findViewById(R.id.txtPlaceholderTwo);
         txtPlaceholderOne.setText(R.string.card_request);
-        txtPlaceholderTwo.setText("");
+        txtPlaceholderTwo.setText(R.string.reminder_logout);
 
         btnLogIn = findViewById(R.id.btnLogIn);
         btnLocale = findViewById(R.id.btnLocale);

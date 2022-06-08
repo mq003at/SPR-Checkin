@@ -13,14 +13,16 @@ import androidx.core.app.NotificationCompat;
 public class NotificationMaker {
     String title;
     public void NotificationMaker() {this.title = String.valueOf(R.string.app_name);}
-    public void alertInEmployee(Context context, String message, Intent intent, int reqCode ){
+    public void alertInEmployee(Context context, String description, String message, Intent intent, int reqCode ){
         PendingIntent pendingIntent = PendingIntent.getActivity(context, reqCode, intent, PendingIntent.FLAG_ONE_SHOT);
         String CHANNEL_ID = "channel_name";// The id of the channel.
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.logo_icon)
                 .setContentTitle(title)
-                .setContentText(message)
-                .setContentIntent(pendingIntent);
+                .setContentText(description)
+                .setContentIntent(pendingIntent)
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(message));
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "Channel Name";// The user-visible name of the channel.

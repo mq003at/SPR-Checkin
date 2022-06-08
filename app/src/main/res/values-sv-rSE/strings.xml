@@ -24,4 +24,6 @@
     <string name="log">Logg</string>
     <string name="error_file_create">FEL: kan inte skapa filen.</string>
     <string name="error_file_inout">FEL: kan inte skriva till filen.</string>
+    <string name="reminder_logout">Glöm inte att logga ut när du går.</string>
+    <string name="logout_report">Automatisk utloggningsrapport</string>
 </resources>

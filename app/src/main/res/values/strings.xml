@@ -23,6 +23,8 @@
     <string name="log">Log</string>
     <string name="error_file_inout">Problem occurs when outputting to file.</string>
     <string name="error_file_create">Problem occurs when creating file to write.</string>
+    <string name="reminder_logout">Please do not forget to log out when you leave.</string>
+    <string name="logout_report">Automatic Logout Report</string>
 
 
 </resources>

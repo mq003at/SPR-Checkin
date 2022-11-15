@@ -25,6 +25,12 @@
     <string name="error_file_create">Problem occurs when creating file to write.</string>
     <string name="reminder_logout">Please do not forget to log out when you leave.</string>
     <string name="logout_report">Automatic Logout Report</string>
+    <string name="store_s_password">Store\'s Password</string>
+    <string name="go_back">Go Back</string>
+    <string name="next">Next</string>
+    <string name="write_nfc_tags">Write NFC Tags</string>
+    <string name="sbm">Next</string>
+    <string name="wrong_password">Wrong password.</string>
 
 
 </resources>

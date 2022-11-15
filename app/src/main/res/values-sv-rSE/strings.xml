@@ -26,4 +26,10 @@
     <string name="error_file_inout">FEL: kan inte skriva till filen.</string>
     <string name="reminder_logout">Glöm inte att logga ut när du går.</string>
     <string name="logout_report">Automatisk utloggningsrapport</string>
+    <string name="store_s_password">Store\'s Password</string>
+    <string name="go_back">Go Back</string>
+    <string name="next">Next</string>
+    <string name="write_nfc_tags">Write NFC Tags</string>
+    <string name="sbm">Next</string>
+    <string name="wrong_password">Wrong password.</string>
 </resources>

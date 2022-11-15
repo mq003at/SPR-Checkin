@@ -16,6 +16,7 @@ import java.util.Date;
 
 public class TaskManager {
     long timeTrigger;
+    int intTimeTriggered;
 
     Context context;
     Intent intent;
@@ -42,36 +43,44 @@ public class TaskManager {
     }
 
     public void setLogoutAtNight(){
-        Log.e("Set: ", "Yes");
+        timeTrigger = calendarGenerator(23, 58, 0);
         intent = new Intent(context, TaskManager.LogoutAtNight.class);
-        timeTrigger = calendarGenerator(23, 56, 0);
+        intent.putExtra("time_triggered", String.valueOf(timeTrigger));
         pendingIntent = PendingIntent.getBroadcast(context, (int) timeTrigger, intent, PendingIntent.FLAG_ONE_SHOT);
         alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, timeTrigger, pendingIntent);
+        Log.e("TimeLogoutToSet", String.valueOf(timeTrigger));
+
     }
 
     public void setGenerateTodayLogAtNight() {
+        timeTrigger = calendarGenerator(23, 58, 0);
         intent = new Intent(context, TaskManager.GenerateLogAtNight.class);
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        timeTrigger = calendarGenerator(23, 58, 0);
+        intent.putExtra("time_triggered", timeTrigger);
         pendingIntent = PendingIntent.getBroadcast(context, (int) timeTrigger, intent, 0);
         alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, timeTrigger, pendingIntent);
     }
 
     public void unregisterGenerateTodayLogAtNight(Context context){
-        intent = new Intent(context, TaskManager.GenerateLogAtNight.class);
         timeTrigger = calendarGenerator(23, 58, 0);
+        intent = new Intent(context, TaskManager.GenerateLogAtNight.class);
+        intent.putExtra("time_triggered", timeTrigger);
         pendingIntent = PendingIntent.getBroadcast(context, (int) timeTrigger, intent, 0);
         alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         alarmManager.cancel(pendingIntent);
     }
 
     static public class LogoutAtNight extends BroadcastReceiver {
+        long longTimeTriggered;
+        long currentTime;
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e("Go", "Yes");
-            if (new InternetHandler(context).checkForInternet()) {
+            currentTime = System.currentTimeMillis();
+            longTimeTriggered = Long.parseLong(intent.getExtras().getString("time_triggered"));
+            if ((new InternetHandler(context).checkForInternet() && ((currentTime - longTimeTriggered) < 300))) {
+                // Vibrator not work when device sleep
                 Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
                 vibrator.vibrate(4000);
                 FirebaseAccess access = new FirebaseAccess();
@@ -81,9 +90,14 @@ public class TaskManager {
     }
 
     static public class GenerateLogAtNight extends BroadcastReceiver {
+        long longTimeTriggered;
+        long currentTime;
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (new InternetHandler(context).checkForInternet()) {
+            currentTime = System.currentTimeMillis();
+            longTimeTriggered = Long.parseLong(intent.getExtras().getString("time_triggered"));
+            if ((new InternetHandler(context).checkForInternet() && ((currentTime - longTimeTriggered) < 300))) {
+                // Vibrator not work when device sleep
                 Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
                 vibrator.vibrate(4000);
                 Date date = new Date();

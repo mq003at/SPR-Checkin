@@ -28,9 +28,14 @@ import java.util.Date;
 public class FirebaseAccess {
     final private DatabaseReference shopReference;
     final private DatabaseReference eventReference;
+    final private DatabaseReference pinReference;
+    final private String shop = "b4b8bb4ceeaa2aee";
 
     public String eName;
     public String employeeID;
+    private String storePasscode;
+    private String error;
+    private String[] empInfo;
 
     public interface String_Callback {
         void onSuccess(String value);
@@ -42,11 +47,35 @@ public class FirebaseAccess {
 
     public FirebaseAccess() {
         FirebaseDatabase dbInstance = FirebaseDatabase.getInstance();
-        eventReference = dbInstance.getReference().child("shop_events/b4b8bb4ceeaa2aee/authorised_id/");
-        shopReference = dbInstance.getReference().child("shop_data/b4b8bb4ceeaa2aee/employee_data/");
+        eventReference = dbInstance.getReference().child("shop_events/" + shop + "/authorised_id/");
+        shopReference = dbInstance.getReference().child("shop_data/" + shop + "/employee_data/");
+        pinReference = dbInstance.getReference().child("shop_data/" + shop + "/pin/");
         employeeID = "";
     }
 
+    public String storePasscode() {
+        return storePasscode;
+    }
+
+    public String eName() {
+        return eName;
+    }
+
+    public String error() {
+        return error;
+    }
+
+    public void get_store_passcode(Context context) {
+        pinReference.get().addOnCompleteListener(task -> {
+            if (!task.isSuccessful()) {
+                error = context.getString(R.string.get_database_error, task.getException());
+                storePasscode = null;
+            }
+            else {
+                storePasscode = String.valueOf(task.getResult().getValue());
+            };
+        });
+    }
 
     public void update_state(String id, String direction) {
         eventReference.child(id + "/actual_state").setValue(direction);
@@ -63,17 +92,20 @@ public class FirebaseAccess {
             if (!task.isSuccessful()) {
                 txtPlaceholderTwo.setText(context.getString(R.string.get_database_error, task.getException()));
             } else {
+                String newStamp = documentStamp + employeeID;
                 String direction = String.valueOf(task.getResult().getValue());
                 String strDirection;
                 if (direction.equals("in")) {
                     direction = "out";
+                    newStamp += "0";
                     strDirection = context.getString(R.string.logout);
                 } else {
                     direction = "in";
+                    newStamp += "1";
                     strDirection = context.getString(R.string.login);
                 }
                 update_state(id, direction);
-                add_record(id, documentStamp, timeStamp, dateStamp, direction);
+                add_record(id, newStamp, timeStamp, dateStamp, direction);
                 txtPlaceholderTwo.setText(context.getString(R.string.direction_employee, eName, strDirection, realtime));
                 new Handler().postDelayed(() -> {
                     // Refresh
@@ -84,13 +116,21 @@ public class FirebaseAccess {
     }
 
     public void output_name(String id, Context context) {
+        Log.e("output", "reach");
         get_name(id, context, name -> {
             TextView txtPlaceholderOne = ((Activity) context).findViewById(R.id.txtPlaceholderOne);
             txtPlaceholderOne.setText(context.getString(R.string.hello_employee, name));
         });
     }
 
+    public void get_info(String id, Context context) {
+        get_name(id, context, name -> {
+
+        });
+    }
+
     public void get_name(String id, Context context, final String_Callback callback) {
+        Log.e("id", id);
         shopReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -101,13 +141,14 @@ public class FirebaseAccess {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             if (snapshot.exists()) {
+                                Log.e("To here", "reach");
                                 String[] arrEmp = snapshot.getValue().toString().split("=", 5);
                                 String[] employeeName = arrEmp[2].split(",");
                                 eName = employeeName[0];
                                 employeeID = id;
                                 callback.onSuccess(eName);
                             }
-//                                    Toast.makeText(context, R.string.no_tag_on_database, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, R.string.no_tag_on_database, Toast.LENGTH_SHORT).show();
                         }
 
                         @Override
@@ -193,7 +234,6 @@ public class FirebaseAccess {
 
     // Logout all employee
     public void logout_all(Context context) {
-        Log.e("logoutall", "reach");
         Query query = eventReference.orderByChild("actual_state").equalTo("in");
         query.addListenerForSingleValueEvent(new ValueEventListener() {
 
@@ -203,7 +243,7 @@ public class FirebaseAccess {
                     StringBuilder listNotLoggedOut = new StringBuilder();
                     Date date = new Date();
                     String timeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(date);
-                    String documentStamp = new SimpleDateFormat("yyyyMMddHHmmssS").format(date);
+                    String documentStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(date);
                     String dateStamp = new SimpleDateFormat("yyyyMMdd").format(date);
                     int dateS = Integer.parseInt(dateStamp);
 

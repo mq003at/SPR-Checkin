@@ -8,6 +8,26 @@
     android:textAlignment="center"
     tools:context=".MainActivity">
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnWrite"
+
+        android:layout_width="322dp"
+        android:layout_height="63dp"
+        android:layout_margin="3dp"
+
+        android:radius="20dp"
+        android:textColor="#ffffff"
+        android:textSize="25sp"
+        app:backgroundTint="#a7173b"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.505"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.799"
+        tools:text="@string/write_nfc_tags" />
+
     <TextView
         android:id="@+id/txtPlaceholderTwo"
         android:layout_width="300dp"
@@ -46,8 +66,8 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnLogIn"
 
-        android:layout_width="315dp"
-        android:layout_height="80dp"
+        android:layout_width="322dp"
+        android:layout_height="63dp"
         android:layout_margin="3dp"
 
         android:radius="20dp"
@@ -59,7 +79,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.903"
+        app:layout_constraintVertical_bias="0.913"
         tools:text="@string/in_out" />
 
     <ImageView

@@ -11,8 +11,8 @@
     <string name="no_tag_on_database">" Emme löydä sinua palvelimiltamme."</string>
     <string name="hello_employee">Hei %1$s.</string>
     <string name="direction_employee">%1$s %2$s klo %3$s.</string>
-    <string name="login">kirjaudu sisään</string>
-    <string name="logout">kirjaudu ulos</string>
+    <string name="login">kirjautui sisään</string>
+    <string name="logout">kirjautui ulos</string>
     <string name="card_request">Laita korttisi puhelimen taakse.</string>
     <string name="no_nfc_support">Ei NFC-tukea. Käynnistä puhelimesi uudelleen tai vie se korjattavaksi.</string>
     <string name="nfc_disable_alert">NFC-ominaisuus on poistettu käytöstä. Ota se käyttöön asetuksissa.</string>
@@ -26,4 +26,10 @@
     <string name="error_file_inout">VIRHE: tiedostoon ei voi kirjoittaa.</string>
     <string name="reminder_logout">Muista kirjautua ulos lähtiessäsi.</string>
     <string name="logout_report">Automaattinen uloskirjautumisraportti</string>
+    <string name="store_s_password">Store\'s Password</string>
+    <string name="go_back">Go Back</string>
+    <string name="next">Next</string>
+    <string name="write_nfc_tags">Write NFC Tags</string>
+    <string name="sbm">Next</string>
+    <string name="wrong_password">Wrong password.</string>
 </resources>

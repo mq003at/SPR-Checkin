@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity{
     TextView txtPlaceholderOne;
     TextView txtPlaceholderTwo;
     Button btnLogIn;
+    Button btnWrite;
     ImageButton btnLocale;
     ImageButton btnLocale2;
     ImageButton btnLocale3;
@@ -80,6 +82,8 @@ public class MainActivity extends AppCompatActivity{
         btnLocale2 = findViewById(R.id.btnLocale2);
         btnLocale3 = findViewById(R.id.btnLocale3);
         btnLogIn.setText(R.string.in_out);
+        btnWrite = findViewById(R.id.btnWrite);
+        btnWrite.setText(R.string.write_nfc_tags);
         checkBoxLog = findViewById(R.id.checkBoxLog);
 
         // NFC Init
@@ -96,13 +100,21 @@ public class MainActivity extends AppCompatActivity{
         sprManager = new TaskManager(this);
 
         // Button
+        btnWrite.setOnClickListener(v -> {
+            Intent goWriteNfc = new Intent(v.getContext(), NfcWriteActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putString("locale", currentLocale);
+            goWriteNfc.putExtras(bundle);
+            startActivity(goWriteNfc);
+        });
+
         btnLogIn.setOnClickListener(view -> {
             if (access.employeeID.equals("")) txtPlaceholderOne.setText(R.string.card_request);
             else {
 
                 // Time init, scheduledTime equivalent to 23:55.
                 Date date = new Date();
-                documentStamp = new SimpleDateFormat("yyyyMMddHHmmssS").format(date);
+                documentStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(date);
                 timeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(date);
                 dateStamp = new SimpleDateFormat("yyyyMMdd").format(date);
                 dateS = Integer.parseInt(dateStamp);
@@ -190,6 +202,8 @@ public class MainActivity extends AppCompatActivity{
                 NdefMessage ndfMsg = (NdefMessage) rawMessages[0];
                 String message = new String(ndfMsg.getRecords()[0].getPayload());
                 String empID = message.substring(3);
+
+                Log.e("Data", empID);
 
                 // Database get name
                 access = new FirebaseAccess();

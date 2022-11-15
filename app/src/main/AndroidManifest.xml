@@ -42,6 +42,7 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
+        <activity android:name=".NfcWriteActivity"></activity>
         <receiver android:name=".TaskManager$LogoutAtNight"
             android:exported="true">
             <intent-filter>

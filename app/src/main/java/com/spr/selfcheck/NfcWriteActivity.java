@@ -12,6 +12,7 @@ import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.Ndef;
 import android.nfc.tech.NdefFormatable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -64,9 +65,9 @@ public class NfcWriteActivity extends Activity {
         isAuthorized = false;
         access = new FirebaseAccess();
         access.get_store_passcode(this);
-        txtInputGuide.setText("Input password, then press Next, then input the new tagID and press next again, then insert the card to write the ID to the tag.");
+        txtInputGuide.setText(R.string.txt_guide);
         currentLocale = getIntent().getExtras().getString("locale");
-        editInput.setHint("Manger's password");
+        editInput.setHint(R.string.manager_pass);
         Intent backToMain = new Intent(this, MainActivity.class);
 
         // NFC Init
@@ -83,7 +84,7 @@ public class NfcWriteActivity extends Activity {
         btnBack.setOnClickListener(v -> startActivity(backToMain));
         btnSbm.setOnClickListener(v -> {
             if (editInput.getText().toString().equals(""))
-                txtInputGuide.setText("Do not leave this field blank");
+                txtInputGuide.setText(R.string.no_blank);
             else {
                 if (!isAuthorized) {
                     String password = access.storePasscode();
@@ -92,20 +93,15 @@ public class NfcWriteActivity extends Activity {
                         if (!editInput.getText().toString().equals(password)) {
                             txtInputGuide.setText(R.string.wrong_password);
                         } else {
-                            txtInputGuide.setText("Input the tagID you want to write.");
+                            txtInputGuide.setText(R.string.txt_guide_input_id);
                             editInput.setText("");
-                            editInput.setHint("Tag ID.");
+                            editInput.setHint("ID");
                             isAuthorized = true;
                         }
                     }
                 } else {
                     tagRecord = editInput.getText().toString();
-                    if (empID == null) {
-                        txtInputGuide.setText("Please insert card.");
-                    } else {
-                        txtInputGuide.setText("Insert the card behind the phone to start writing.");
-                        Log.e("Write", editInput.getText().toString());
-                    }
+                    txtInputGuide.setText(R.string.txt_guide_insert_card);
                 }
             }
         });
@@ -143,14 +139,14 @@ public class NfcWriteActivity extends Activity {
                     NdefMessage ndfMsg = (NdefMessage) rawMessages[0];
                     String message = new String(ndfMsg.getRecords()[0].getPayload());
                     empID = message.substring(3);
-                    Toast.makeText(this, "Old ID: " + empID + ". New ID: " + tagRecord + ".", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, this.getString(R.string.txt_guide_popup_replace, empID, tagRecord), Toast.LENGTH_LONG).show();
                 } else {
                     // Write new tag
-                    Toast.makeText(this, "New NFC tag: " + tagRecord + ".", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, this.getString(R.string.txt_guide_popup_newid, tagRecord), Toast.LENGTH_LONG).show();
                 }
                 writeTag(tag, createTextMessage(tagRecord));
                 refresh();
-            } else txtInputGuide.setText("You have to type the password or the tagID and press Next before inserting the card!");
+            } else txtInputGuide.setText(R.string.txt_guide_card_wrong);
 
         }
     }
@@ -182,7 +178,7 @@ public class NfcWriteActivity extends Activity {
         adapter.disableForegroundDispatch(activity);
     }
 
-    public NdefMessage createTextMessage (String id) {
+    public NdefMessage createTextMessage(String id) {
         try {
             byte[] lang = Locale.getDefault().getLanguage().getBytes(StandardCharsets.UTF_8);
             byte[] text = id.getBytes(StandardCharsets.UTF_8); // Content in UTF-8
@@ -224,11 +220,10 @@ public class NfcWriteActivity extends Activity {
         }
     }
 
-    @SuppressLint("SetTextI18n")
-    public void refresh(){
-        txtInputGuide.setText("You can go back to the login screen, or press the new tag ID in the input field, press next, then insert the new card to continue writing.");
+    public void refresh() {
+        txtInputGuide.setText(R.string.txt_guide_after);
         editInput.setText("");
-        editInput.setHint("123456");
+        editInput.setHint(R.string.placeholder_id);
         editInput.clearFocus();
         empID = null;
         tagRecord = null;

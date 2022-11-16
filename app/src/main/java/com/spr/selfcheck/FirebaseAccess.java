@@ -29,6 +29,7 @@ public class FirebaseAccess {
     final private DatabaseReference shopReference;
     final private DatabaseReference eventReference;
     final private DatabaseReference pinReference;
+    final private DatabaseReference todoReference;
     final private String shop = "b4b8bb4ceeaa2aee";
 
     public String eName;
@@ -50,6 +51,7 @@ public class FirebaseAccess {
         eventReference = dbInstance.getReference().child("shop_events/" + shop + "/authorised_id/");
         shopReference = dbInstance.getReference().child("shop_data/" + shop + "/employee_data/");
         pinReference = dbInstance.getReference().child("shop_data/" + shop + "/pin/");
+        todoReference = dbInstance.getReference().child("shop_events/" + shop + "/todo_data/");
         employeeID = "";
     }
 
@@ -84,6 +86,12 @@ public class FirebaseAccess {
     public void add_record(String id, String documentStamp, String timeStamp, int dateStamp, String direction) {
         EventLog record = new EventLog(dateStamp, direction, timeStamp);
         eventReference.child(id + "/log_events/" + documentStamp).setValue(record);
+    }
+
+    public void add_todo(String text, boolean check, String recipient, String documentStamp, String dateStamp, String dateS) {
+        // Add record
+        TodoRecord todoRecord = new TodoRecord(dateS, dateStamp, recipient, check, text);
+        todoReference.child(documentStamp + "Todo").setValue(todoRecord);
     }
 
     public void self_check(String id, String documentStamp, String timeStamp, int dateStamp, String realtime, Context context) {
@@ -123,12 +131,6 @@ public class FirebaseAccess {
         });
     }
 
-    public void get_info(String id, Context context) {
-        get_name(id, context, name -> {
-
-        });
-    }
-
     public void get_name(String id, Context context, final String_Callback callback) {
         Log.e("id", id);
         shopReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -147,8 +149,7 @@ public class FirebaseAccess {
                                 eName = employeeName[0];
                                 employeeID = id;
                                 callback.onSuccess(eName);
-                            }
-                            Toast.makeText(context, R.string.no_tag_on_database, Toast.LENGTH_SHORT).show();
+                            } else Toast.makeText(context, R.string.no_tag_on_database, Toast.LENGTH_SHORT).show();
                         }
 
                         @Override
@@ -245,6 +246,7 @@ public class FirebaseAccess {
                     String timeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(date);
                     String documentStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(date);
                     String dateStamp = new SimpleDateFormat("yyyyMMdd").format(date);
+                    String dateTodo = new SimpleDateFormat("dd-MM-yyyy").format(date);
                     int dateS = Integer.parseInt(dateStamp);
 
                     for (DataSnapshot snap : snapshot.getChildren()) {
@@ -252,9 +254,11 @@ public class FirebaseAccess {
                         add_record(snap.getKey(), documentStamp, timeStamp, dateS,"out");
                         listNotLoggedOut.append(snap.getKey()).append(" ");
                     }
-                    NotificationMaker notify = new NotificationMaker();
-                    notify.alertInEmployee(context, context.getString(R.string.logout_report), context.getString(R.string.alert_not_logout, listNotLoggedOut.toString()), new Intent(context, FirebaseAccess.class), 1);
 
+                    NotificationMaker notify = new NotificationMaker();
+                    String alert = context.getString(R.string.alert_not_logout, listNotLoggedOut.toString());
+                    notify.alertInEmployee(context, context.getString(R.string.logout_report), alert, new Intent(context, FirebaseAccess.class), 1);
+                    add_todo(alert, false, "Opastajat", documentStamp, dateStamp, dateTodo);
                 }
             }
 

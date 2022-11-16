@@ -32,4 +32,14 @@
     <string name="write_nfc_tags">Write NFC Tags</string>
     <string name="sbm">Next</string>
     <string name="wrong_password">Wrong password.</string>
+    <string name="txt_guide">Input password, then press Next, then input the new tagID and press next again, then insert the card to write the ID to the tag.</string>
+    <string name="txt_guide_after">You can go back to the login screen, or press the new tag ID in the input field, press next, then insert the new card to continue writing.</string>
+    <string name="placeholder_id">ID</string>
+    <string name="txt_guide_card_wrong">You have to type the password or the tagID and press Next before inserting the card!</string>
+    <string name="txt_guide_insert_card">Please insert card.</string>
+    <string name="txt_guide_input_id">Input the tagID you want to write.</string>
+    <string name="manager_pass">Manger\'s password</string>
+    <string name="no_blank">Do not leave this field blank</string>
+    <string name="txt_guide_popup_replace">Old ID: %1$s. New ID: %2$s.</string>
+    <string name="txt_guide_popup_newid">New NFC tag: %1$s.</string>
 </resources>

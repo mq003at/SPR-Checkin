@@ -26,10 +26,20 @@
     <string name="error_file_inout">VIRHE: tiedostoon ei voi kirjoittaa.</string>
     <string name="reminder_logout">Muista kirjautua ulos lähtiessäsi.</string>
     <string name="logout_report">Automaattinen uloskirjautumisraportti</string>
-    <string name="store_s_password">Store\'s Password</string>
-    <string name="go_back">Go Back</string>
-    <string name="next">Next</string>
-    <string name="write_nfc_tags">Write NFC Tags</string>
-    <string name="sbm">Next</string>
-    <string name="wrong_password">Wrong password.</string>
+    <string name="store_s_password">Myymälän Salasana</string>
+    <string name="next">Seuraava</string>
+    <string name="write_nfc_tags">Kirjoita Tägejä</string>
+    <string name="sbm">Seuraava</string>
+    <string name="wrong_password">Väärä salasana.</string>
+    <string name="txt_guide">Syötä salasana ja paina seuraava näppäintä. Tämän jälkeen syöty uuden tägin numero, pistä tägi puhelimen taakse ja paina uudelleen seuraava näppäintä.</string>
+    <string name="txt_guide_after">Voit mennä takaisin alkuun takaisin näppäimellä tai jatkaa uusien tägien kirjoittamista syöttämällä uuden tägin numeron ja painamalla seuraava näppäintä.</string>
+    <string name="placeholder_id">ID</string>
+    <string name="txt_guide_card_wrong">Syötä myymälä salasana ja pain seuraav näppäintä ja sitten syöty uuden tägin numero ja laita nimikortti puhelimen taakse.</string>
+    <string name="txt_guide_insert_card">Syötä kortti.</string>
+    <string name="txt_guide_input_id">Syötä haluamasi tägi numero.</string>
+    <string name="manager_pass">Ohjaajan salasana</string>
+    <string name="no_blank">Älä jätä syöttö ruutua tyhjäksi.</string>
+    <string name="txt_guide_popup_replace">Vanha ID: %1$s. Uusi ID: %2$s.</string>
+    <string name="txt_guide_popup_newid">Uusi NFC tägi: %1$s.</string>
+    <string name="go_back">Takaisin</string>
 </resources>

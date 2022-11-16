@@ -22,6 +22,10 @@ public class TodoRecord {
         name = "SPR-Kirppis Android App";
     }
 
+    public TodoRecord() {
+
+    }
+
     public String getDate() {
         return date;
     }

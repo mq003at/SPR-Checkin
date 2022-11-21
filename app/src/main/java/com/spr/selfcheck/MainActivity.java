@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -15,17 +14,17 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
+import android.nfc.Tag;
+import android.nfc.tech.NfcF;
 import android.os.Bundle;
 
 import android.os.Handler;
 import android.os.Parcelable;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import java.text.SimpleDateFormat;
@@ -94,7 +93,6 @@ public class MainActivity extends AppCompatActivity{
         if (!nfcAdapter.isEnabled()) {
             txtPlaceholderOne.setText(R.string.nfc_disable_alert);
         }
-        handleIntent(getIntent());
 
         access = new FirebaseAccess();
         sprManager = new TaskManager(this);
@@ -195,16 +193,13 @@ public class MainActivity extends AppCompatActivity{
     }
 
     private void handleIntent(Intent intent) {
-        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
-            Parcelable[] rawMessages =
-                    intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
-            if (rawMessages != null) {
-                NdefMessage ndfMsg = (NdefMessage) rawMessages[0];
-                String message = new String(ndfMsg.getRecords()[0].getPayload());
+        Parcelable[] rawMessages =
+                intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
+        NdefMessage ndfMsg = (NdefMessage) rawMessages[0];
+        String message = new String(ndfMsg.getRecords()[0].getPayload());
+
+        if (message.isEmpty() == false) {
                 String empID = message.substring(3);
-
-                Log.e("Data", empID);
-
                 // Database get name
                 access = new FirebaseAccess();
                 access.output_name(empID, this);
@@ -215,32 +210,21 @@ public class MainActivity extends AppCompatActivity{
                     access = new FirebaseAccess();
 
                 }, 10000);
-
-            } else {txtPlaceholderOne.setText(R.string.card_read_problem_warning);}
+        } else {
+            txtPlaceholderOne.setText("Discover an empty tag!");
+            txtPlaceholderTwo.setText("Remember to add the employee after writing ID to the tag.");
         }
     }
 
     public static void setupForegroundDispatch(final Activity activity, NfcAdapter adapter) {
-        Intent intent = new Intent(activity.getApplicationContext(), activity.getClass());
-        intent.putExtra("requestCode", 0);
-        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        IntentFilter discovery=new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
+        IntentFilter[] tagFilters=new IntentFilter[] { discovery };
+        Intent i=new Intent(activity.getApplicationContext(), activity.getClass())
+                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP|
+                        Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pi=PendingIntent.getActivity(activity.getApplicationContext(), 0, i, 0);
 
-        final PendingIntent pendingIntent = PendingIntent.getActivity(activity.getApplicationContext(), 0, intent, 0);
-
-        IntentFilter[] filters = new IntentFilter[1];
-        String[][] techList = new String[][]{};
-
-        // Notice that this is the same filter as in our manifest.
-        filters[0] = new IntentFilter();
-        filters[0].addAction(NfcAdapter.ACTION_NDEF_DISCOVERED);
-        filters[0].addCategory(Intent.CATEGORY_DEFAULT);
-        try {
-            filters[0].addDataType("text/plain");
-        } catch (MalformedMimeTypeException e) {
-            throw new RuntimeException("Check your mime type.");
-        }
-
-        adapter.enableForegroundDispatch(activity, pendingIntent, filters, techList);
+        adapter.enableForegroundDispatch(activity, pi, tagFilters, null);
     }
 
     public static void stopForegroundDispatch(final Activity activity, NfcAdapter adapter) {

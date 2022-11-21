@@ -78,7 +78,6 @@ public class NfcWriteActivity extends Activity {
         if (!nfcAdapter.isEnabled()) {
             txtInputGuide.setText(R.string.nfc_disable_alert);
         }
-        handleIntent(getIntent());
 
         // Btn Init
         btnBack.setOnClickListener(v -> startActivity(backToMain));
@@ -129,20 +128,22 @@ public class NfcWriteActivity extends Activity {
 
     @SuppressLint("SetTextI18n")
     private void handleIntent(Intent intent) {
-        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
+        if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())) {
             Log.e("Good", isAuthorized + " " + tagRecord);
             Parcelable[] rawMessages = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
             tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+            NdefMessage ndfMsg = (NdefMessage) rawMessages[0];
+            String message = new String(ndfMsg.getRecords()[0].getPayload());
             if (isAuthorized && tagRecord != null) {
-                if (rawMessages != null) {
-                    // Replace tags
-                    NdefMessage ndfMsg = (NdefMessage) rawMessages[0];
-                    String message = new String(ndfMsg.getRecords()[0].getPayload());
-                    empID = message.substring(3);
-                    Toast.makeText(this, this.getString(R.string.txt_guide_popup_replace, empID, tagRecord), Toast.LENGTH_LONG).show();
-                } else {
+                if (message.isEmpty()) {
+
                     // Write new tag
                     Toast.makeText(this, this.getString(R.string.txt_guide_popup_newid, tagRecord), Toast.LENGTH_LONG).show();
+
+                } else {
+                    // Replace tags
+                    empID = message.substring(3);
+                    Toast.makeText(this, this.getString(R.string.txt_guide_popup_replace, empID, tagRecord), Toast.LENGTH_LONG).show();
                 }
                 writeTag(tag, createTextMessage(tagRecord));
                 refresh();
@@ -152,26 +153,14 @@ public class NfcWriteActivity extends Activity {
     }
 
     public static void setupForegroundDispatch(final Activity activity, NfcAdapter adapter) {
-        Intent intent = new Intent(activity.getApplicationContext(), activity.getClass());
-        intent.putExtra("requestCode", 0);
-        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        IntentFilter discovery=new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
+        IntentFilter[] tagFilters=new IntentFilter[] { discovery };
+        Intent i=new Intent(activity.getApplicationContext(), activity.getClass())
+                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP|
+                        Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pi=PendingIntent.getActivity(activity.getApplicationContext(), 0, i, 0);
 
-        @SuppressLint("UnspecifiedImmutableFlag") final PendingIntent pendingIntent = PendingIntent.getActivity(activity.getApplicationContext(), 0, intent, 0);
-
-        IntentFilter[] filters = new IntentFilter[1];
-        String[][] techList = new String[][]{};
-
-        // Notice that this is the same filter as in our manifest.
-        filters[0] = new IntentFilter();
-        filters[0].addAction(NfcAdapter.ACTION_NDEF_DISCOVERED);
-        filters[0].addCategory(Intent.CATEGORY_DEFAULT);
-        try {
-            filters[0].addDataType("text/plain");
-        } catch (IntentFilter.MalformedMimeTypeException e) {
-            throw new RuntimeException("Check your mime type.");
-        }
-
-        adapter.enableForegroundDispatch(activity, pendingIntent, filters, techList);
+        adapter.enableForegroundDispatch(activity, pi, tagFilters, null);
     }
 
     public static void stopForegroundDispatch(final Activity activity, NfcAdapter adapter) {
@@ -199,7 +188,7 @@ public class NfcWriteActivity extends Activity {
     }
 
     public void writeTag(Tag tag, NdefMessage id) {
-        if (tag != null) {
+        if (Ndef.get(tag) != null) {
             try {
                 Ndef ndefTag = Ndef.get(tag);
                 if (ndefTag == null) {

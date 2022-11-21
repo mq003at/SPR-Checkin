@@ -124,7 +124,6 @@ public class FirebaseAccess {
     }
 
     public void output_name(String id, Context context) {
-        Log.e("output", "reach");
         get_name(id, context, name -> {
             TextView txtPlaceholderOne = ((Activity) context).findViewById(R.id.txtPlaceholderOne);
             txtPlaceholderOne.setText(context.getString(R.string.hello_employee, name));
@@ -132,7 +131,6 @@ public class FirebaseAccess {
     }
 
     public void get_name(String id, Context context, final String_Callback callback) {
-        Log.e("id", id);
         shopReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -143,13 +141,12 @@ public class FirebaseAccess {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             if (snapshot.exists()) {
-                                Log.e("To here", "reach");
                                 String[] arrEmp = snapshot.getValue().toString().split("=", 5);
                                 String[] employeeName = arrEmp[2].split(",");
                                 eName = employeeName[0];
                                 employeeID = id;
                                 callback.onSuccess(eName);
-                            } else Toast.makeText(context, R.string.no_tag_on_database, Toast.LENGTH_SHORT).show();
+                            }
                         }
 
                         @Override
@@ -158,6 +155,7 @@ public class FirebaseAccess {
                         }
                     });
                 }
+                if (eName == null) Toast.makeText(context, R.string.no_tag_on_database, Toast.LENGTH_SHORT).show();
             }
 
             @Override

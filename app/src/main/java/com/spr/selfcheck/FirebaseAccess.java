@@ -34,9 +34,9 @@ public class FirebaseAccess {
 
     public String eName;
     public String employeeID;
+    public long count;
     private String storePasscode;
     private String error;
-    private String[] empInfo;
 
     public interface String_Callback {
         void onSuccess(String value);
@@ -131,9 +131,11 @@ public class FirebaseAccess {
     }
 
     public void get_name(String id, Context context, final String_Callback callback) {
+        Log.e("reach", "reach");
         shopReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                count = snapshot.getChildrenCount();
                 for (DataSnapshot snap : snapshot.getChildren()) {
                     String snapKey = snap.getKey();
                     Query query = shopReference.child(snapKey + "/employees/").orderByChild("tag_id").equalTo(id);
@@ -146,16 +148,20 @@ public class FirebaseAccess {
                                 eName = employeeName[0];
                                 employeeID = id;
                                 callback.onSuccess(eName);
+                            } else {
+                                if (count == 1) {
+                                    Toast.makeText(context, R.string.no_tag_on_database, Toast.LENGTH_SHORT).show();
+                                }
+                                Log.e("count", String.valueOf(count));
+                                count--;
                             }
                         }
-
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
                             Toast.makeText(context, context.getString(R.string.get_database_error, error), Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
-                if (eName == null) Toast.makeText(context, R.string.no_tag_on_database, Toast.LENGTH_SHORT).show();
             }
 
             @Override

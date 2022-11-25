@@ -282,7 +282,7 @@ public class FirebaseAccess {
         });
     }
 
-    // Generate todo log based on people not logging out
+    // Generate td log based on people not logging out
     public void add_not_logout_todo (Context context, ArrayList<String> idList, String documentStamp, String dateStamp, String dateTodo) {
         multiple_get_name(idList, context, nameList -> {
             String alert = context.getString(R.string.alert_not_logout, nameList);

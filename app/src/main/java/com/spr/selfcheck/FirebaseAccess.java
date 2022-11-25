@@ -19,6 +19,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,7 +44,7 @@ public class FirebaseAccess {
     }
 
     public interface List_String_Callback {
-        void onSuccess(ArrayList<ArrayList<String>> value);
+        void onSuccess(ArrayList<String> value);
     }
 
     public FirebaseAccess() {
@@ -125,17 +126,21 @@ public class FirebaseAccess {
 
     public void output_name(String id, Context context) {
         get_name(id, context, name -> {
-            TextView txtPlaceholderOne = ((Activity) context).findViewById(R.id.txtPlaceholderOne);
-            txtPlaceholderOne.setText(context.getString(R.string.hello_employee, name));
+            if (name.equals("empty")) Toast.makeText(context, R.string.no_tag_on_database, Toast.LENGTH_SHORT).show();
+            else {
+                TextView txtPlaceholderOne = ((Activity) context).findViewById(R.id.txtPlaceholderOne);
+                txtPlaceholderOne.setText(context.getString(R.string.hello_employee, name));
+            }
         });
     }
 
     public void get_name(String id, Context context, final String_Callback callback) {
         Log.e("reach", "reach");
+
         shopReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                count = snapshot.getChildrenCount();
+                tempObject tempObject = new tempObject(snapshot.getChildrenCount(), "empty");
                 for (DataSnapshot snap : snapshot.getChildren()) {
                     String snapKey = snap.getKey();
                     Query query = shopReference.child(snapKey + "/employees/").orderByChild("tag_id").equalTo(id);
@@ -146,14 +151,14 @@ public class FirebaseAccess {
                                 String[] arrEmp = snapshot.getValue().toString().split("=", 5);
                                 String[] employeeName = arrEmp[2].split(",");
                                 eName = employeeName[0];
+                                tempObject.setTempString(eName);
                                 employeeID = id;
                                 callback.onSuccess(eName);
                             } else {
-                                if (count == 1) {
-                                    Toast.makeText(context, R.string.no_tag_on_database, Toast.LENGTH_SHORT).show();
+                                if (tempObject.baseCount == tempObject.count && tempObject.getTempString().equals("empty")) {
+                                    callback.onSuccess("empty");
                                 }
-                                Log.e("count", String.valueOf(count));
-                                count--;
+                                tempObject.increCount();
                             }
                         }
                         @Override
@@ -183,13 +188,13 @@ public class FirebaseAccess {
                     String snapKey = snap.getKey();
                     Query query = eventReference.child(snapKey + "/log_events").orderByChild("dateStamp").equalTo(Integer.parseInt(today));
                     query.addListenerForSingleValueEvent(new ValueEventListener() {
-                        ArrayList<ArrayList<ArrayList<String>>> listData = new ArrayList<>();
 
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                             if (snapshot.exists()) {
                                 employeeID = snap.getKey();
+
                                 ArrayList<ArrayList<String>> employeeData = new ArrayList<>();
                                 int ArrayPosition = 0;
 
@@ -246,6 +251,8 @@ public class FirebaseAccess {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     StringBuilder listNotLoggedOut = new StringBuilder();
+                    ArrayList<String> idList = new ArrayList<String>();
+
                     Date date = new Date();
                     String timeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(date);
                     String documentStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(date);
@@ -257,12 +264,14 @@ public class FirebaseAccess {
                         update_state(snap.getKey(), "out");
                         add_record(snap.getKey(), documentStamp, timeStamp, dateS,"out");
                         listNotLoggedOut.append(snap.getKey()).append(" ");
+                        idList.add(snap.getKey());
                     }
 
                     NotificationMaker notify = new NotificationMaker();
                     String alert = context.getString(R.string.alert_not_logout, listNotLoggedOut.toString());
                     notify.alertInEmployee(context, context.getString(R.string.logout_report), alert, new Intent(context, FirebaseAccess.class), 1);
-                    add_todo(alert, false, "Opastajat", documentStamp, dateStamp, dateTodo);
+                    add_not_logout_todo(context, idList, documentStamp, dateStamp, dateTodo);
+
                 }
             }
 
@@ -273,5 +282,27 @@ public class FirebaseAccess {
         });
     }
 
+    // Generate todo log based on people not logging out
+    public void add_not_logout_todo (Context context, ArrayList<String> idList, String documentStamp, String dateStamp, String dateTodo) {
+        multiple_get_name(idList, context, nameList -> {
+            String alert = context.getString(R.string.alert_not_logout, nameList);
+            add_todo(alert, false, "Opastajat", documentStamp, dateStamp, dateTodo);
+        });
+    }
 
+    public void multiple_get_name (ArrayList<String> idList, Context context, final String_Callback string_callback) {
+        StringBuilder nameList = new StringBuilder();
+        for (int i=0; i< idList.size(); i++) {
+            int finalI = i;
+            get_name(idList.get(i), context, name -> {
+                if (!name.equals("empty")) {
+                    nameList.append(name);
+                    if (!(finalI == idList.size() - 1)) nameList.append(", ");
+                    else {
+                        string_callback.onSuccess(String.valueOf(nameList));
+                    }
+                }
+            });
+        }
+    }
 }

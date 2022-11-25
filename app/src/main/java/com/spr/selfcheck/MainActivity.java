@@ -127,8 +127,6 @@ public class MainActivity extends AppCompatActivity{
                 // Making log files in case the website breaks (only activate when button checked)
                 if (checkBoxLog.isChecked()) sprManager.setGenerateTodayLogAtNight();
 
-                // More codes
-                access.logout_all(this);
             }
         });
 

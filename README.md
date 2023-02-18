@@ -73,3 +73,4 @@ The databse config file is stored in *google-services.json*. If you want to refe
 
 ## Final Words
 Although the project is open-source, the database belongs to SPR-Kirppis so please only make modifications depending on their requests. If you want to add something, do not hesitate to create a pull request.
+Please contact e-mail quan.nguyen.suomea@gmail.com for more information
